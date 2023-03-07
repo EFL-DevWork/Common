@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  config-server:
+    image: hyness/spring-cloud-config-server
+    container_name: configserver
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./configserver/config:/config
+    environment:
+      - SPRING_PROFILES_ACTIVE=native
+      - SPRING_SECURITY_USER_NAME=${CONFIG_SERVER_USERNAME}
+      - SPRING_SECURITY_USER_PASSWORD=${CONFIG_SERVER_PASSWORD}
+    networks:
+      - default
+    env_file:
+      - "../../.env"
+networks:
+  default:
+    name: ${NETWORK_NAME}

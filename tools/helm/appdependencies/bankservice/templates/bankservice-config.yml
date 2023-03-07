@@ -1,0 +1,9 @@
+# Use config map for not-secret configuration data
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bankservice.fullname" . }}-configmap
+
+data:
+  {{- toYaml .Values.config | nindent 2 }}

@@ -1,0 +1,99 @@
+#The below properties can be overridden with environment variables by passing JVM parameters e.g. -Dspring.datasource.username=bob
+#Refer the link: https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-application-property-files
+
+spring:
+  datasource:
+    #url value will get either from environment variables or from config server
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    #url value will get either from environment variables or from config server
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
+    enabled: true
+    locations: classpath:/db/migration
+  main:
+    allow-bean-definition-overriding: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    show-details: always
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+      sla:
+        http:
+          server:
+            requests: 100ms
+
+resilience4j.circuitbreaker:
+  instances:
+    bankservice:
+      slidingWindowSize: 4
+      permittedNumberOfCallsInHalfOpenState: 4
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 4
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - com.thoughtworks.exceptions.DependencyException
+
+resilience4j.retry:
+  instances:
+    bankservice:
+      maxRetryAttempts: 3
+      waitDuration: 2s
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2
+      retryExceptions:
+        - com.thoughtworks.exceptions.DependencyException
+      ignoreExceptions:
+        - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+
+istio:
+  trafficmanagement:
+    enabled: ${ISTIO_ENABLED:false}
+
+server:
+  port: ${PORT:8080}
+
+logstash:
+  url: ${LOGSTASH_URL:http://localhost:9999}
+
+security:
+  type: ${SECURITY_TYPE:none}
+
+fraud:
+  url: ${FRAUD_URL}
+
+key: ${CRYPTO_KEY}
+
+logging:
+  level:
+    com:
+     thoughtworks: ${LOG_LEVEL:debug}
+
+service:
+  name: ${SERVICE_NAME}
+
+jaeger:
+  endpoint: ${JAEGER_ENDPOINT:http://localhost:14250}
+  enabled: ${JAEGER_ENABLED:false}
+
+
+
+
+

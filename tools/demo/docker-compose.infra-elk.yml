@@ -1,0 +1,74 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    hostname: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    ports:
+      - 9200:9200
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - default
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - default
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.2
+    container_name: logstash
+    volumes:
+      - ./elk/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    expose:
+      - 5000
+      - 5000/tcp
+      - 5000/udp
+    networks:
+      - default
+    depends_on:
+      - elasticsearch
+  
+  filebeat:
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:7.6.2
+    hostname: filebeat
+    volumes:
+      - ./elk/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - filebeat_data:/usr/share/filebeat/data:rw
+    user: root
+    restart: on-failure
+    networks:
+      - default
+
+volumes:
+  elasticsearch-data:
+  filebeat_data:
+
+networks:
+  default:
+    name: ${NETWORK_NAME}

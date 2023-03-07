@@ -1,0 +1,7 @@
+keycloak:
+  auth-server-url: ${AUTH_SERVER_URL}
+  bearer-only: true
+  credentials:
+    secret: ${KEYCLOAK_SECRET}
+  realm: servicestarterrealm
+  resource: ${KEYCLOAK_CLIENT_ID}

@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  bankservice:
+    container_name: bankservice
+    image: public.ecr.aws/h7c9d4d9/demo-bank-service:latest
+    ports:
+      - 9001:9001
+    environment:
+      - JAEGER_ENDPOINT=http://jaeger:14250
+      - DB_USER=paymentuser
+      - DB_NAME=bankdb
+      - DB_PASSWORD=${DATABASE_PASSWORD}
+      - JAEGER_ENABLED=true
+    networks:
+      - default
+
+  fraudservice:
+    container_name: fraudservice
+    image: public.ecr.aws/h7c9d4d9/demo-fraud-service:latest
+    ports:
+      - 9002:9002
+    environment:
+      - JAEGER_ENDPOINT=http://jaeger:14250
+      - JAEGER_ENABLED=true
+    networks:
+      - default
+
+networks:
+  default:
+    name: ${NETWORK_NAME}

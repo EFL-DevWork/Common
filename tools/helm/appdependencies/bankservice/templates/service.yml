@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bankservice.fullname" . }}-clusterip
+
+  labels:
+    {{- include "bankservice.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "bankservice.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      nodePort: 32223

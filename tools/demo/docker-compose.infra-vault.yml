@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  vault:
+    container_name: vault
+    image: vault
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault-vol:/vault/logs
+      - vault-vol:/vault/file
+      - ./vault/config:/vault/config
+    restart: always
+    cap_add:
+      - IPC_LOCK
+    entrypoint:
+      vault server -config=/vault/config/vault.json
+    networks:
+      - default
+
+volumes:
+  vault-vol:
+
+networks:
+  default:
+    name: ${NETWORK_NAME}

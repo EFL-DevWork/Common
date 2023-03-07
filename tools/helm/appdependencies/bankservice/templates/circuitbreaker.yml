@@ -1,0 +1,20 @@
+{{- if .Values.trafficManagement.circuitBreaker.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "bankservice.fullname" . }}-circuitbreaker
+spec:
+  host: {{ include "bankservice.fullname" . }}-clusterip
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: {{ .Values.trafficManagement.circuitBreaker.maxConnections }}
+      http:
+        http1MaxPendingRequests: {{ .Values.trafficManagement.circuitBreaker.http1MaxPendingRequests }}
+        maxRequestsPerConnection: {{ .Values.trafficManagement.circuitBreaker.maxRequestsPerConnection }}
+    outlierDetection:
+      consecutiveErrors: {{ .Values.trafficManagement.circuitBreaker.consecutiveErrors }}
+      interval: {{ .Values.trafficManagement.circuitBreaker.interval }}
+      baseEjectionTime: {{ .Values.trafficManagement.circuitBreaker.baseEjectionTime }}
+      maxEjectionPercent: {{ .Values.trafficManagement.circuitBreaker.maxEjectionPercent }}
+{{- end }}

@@ -1,0 +1,9 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://paymentservice-auth0.auth0.com/
+          #http://localhost:8000/auth/realms/servicestarterrealm
+          jwk-set-uri: https://paymentservice-auth0.auth0.com/.well-known/jwks.json
+          #http://localhost:8000/auth/realms/servicestarterrealm/protocol/openid-connect/certs

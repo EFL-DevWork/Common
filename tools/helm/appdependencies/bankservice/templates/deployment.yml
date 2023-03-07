@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bankservice.fullname" . }}
+  labels:
+    {{- include "bankservice.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "bankservice.selectorLabels" . | nindent 6 }}
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "bankservice.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{ toYaml .Values.containerEnv | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "bankservice.fullname" . }}-configmap
+            - secretRef:
+                name: {{ include "bankservice.fullname" . }}-secrets
+          ports:
+            - containerPort: 8082
+              name: bankserviceport
+#      imagePullSecrets:
+#      - name: dockerregistry-secrets

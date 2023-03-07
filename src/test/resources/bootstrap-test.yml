@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: paymentservice
+  cloud:
+    config:
+      enabled: false
+    vault:
+      enabled: false

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresclientdeployment
+  labels:
+    app: postgresclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresclient
+  template:
+    metadata:
+      labels:
+        app: postgresclient
+    spec:
+      containers:
+        - name: postgresclient
+          image: docker.io/bitnami/postgresql:11.9.0-debian-10-r48
+          ports:
+            - containerPort: 5432
+          env:
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgresclient-secrets
+                key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+      volumes:
+        - name: config-volume
+          configMap:
+            # Provide the name of the ConfigMap containing the files you want
+            # to add to the container
+            name: postgres-config

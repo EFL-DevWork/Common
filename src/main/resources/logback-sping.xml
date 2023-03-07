@@ -1,0 +1,55 @@
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+    <appender name="console"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <excludeMdcKeyName>accountNumber</excludeMdcKeyName>
+            <jsonGeneratorDecorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator">
+                <defaultMask>*****</defaultMask>
+                <path>/body/beneficiary/accountNumber</path>
+                <path>/body/payee/accountNumber</path>
+                <path>/body/password</path>
+                <path>/body/taxID</path>
+                <path>/body/dob</path>
+            </jsonGeneratorDecorator>
+        </encoder>
+    </appender>
+
+    <appender name="file-appender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <excludeMdcKeyName>accountNumber</excludeMdcKeyName>
+            <jsonGeneratorDecorator class="net.logstash.logback.mask.MaskingJsonGeneratorDecorator">
+                <defaultMask>*****</defaultMask>
+                <path>/body/beneficiary/accountNumber</path>
+                <path>/body/payee/accountNumber</path>
+                <path>/body/password</path>
+                <path>/body/taxID</path>
+                <path>/body/dob</path>
+            </jsonGeneratorDecorator>
+        </encoder>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            rollover daily and when the file reaches 10 MegaBytes
+            <fileNamePattern>logs/logs.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="file-appender"/>
+        <appender-ref ref="console"/>
+    </root>
+
+    <!-- LOG "com.thoughtworks*" at TRACE level -->
+    <logger name="com.thoughtworks" level="trace" additivity="false">
+        <appender-ref ref="file-appender"/>
+        <appender-ref ref="console"/>
+    </logger>
+
+</configuration>
+

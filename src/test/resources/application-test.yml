@@ -1,0 +1,38 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: ''
+  flyway:
+    enabled: false
+
+server:
+  port: 1234
+
+security:
+  type: none
+
+logstash:
+  url: localhost:9999
+
+fraud:
+  url: localhost:8083
+
+logging:
+  level:
+    com:
+      thoughtworks: debug
+      
+key: testKeyForJava12
+
+service:
+  name: paymentsvc
+
+jaeger:
+  endpoint: http://localhost:14250
+
+
+

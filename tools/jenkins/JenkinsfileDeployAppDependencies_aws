@@ -1,0 +1,46 @@
+// Uses Declarative syntax to run commands inside a container.
+library identifier: 'gradlelibrary@master',
+    retriever: modernSCM([
+      $class: 'GitSCMSource',
+      credentialsId: 'githubcredentials',
+      remote: 'https://github.com/Regional-IT-India/ci-jenkins-starter-aws.git'
+    ])
+pipeline {
+    agent {
+        kubernetes {
+            yaml libraryResource('jenkins-agent-pod.yaml') // Manifest file for pod. You will find all the common files under resources
+        }
+    }
+    parameters {
+      string(name: 'NAME_SPACE', defaultValue: 'apps', description: 'Add name space to deploy')
+      choice(name: 'CLUSTER_CONFIG_NAME', choices: ["kubernetes-dev","kubernetes-qa"], description: 'Pick one config file to deploy into infra of that cluster')
+      choice(name: 'SERVICE_NAME', choices: ["bankservice","fraudservice"], description: 'Pick one service')
+  }
+  environment{
+      NEXUS_CREDENTIALS    = credentials('nexuscredentials')
+      KUBECONFIG           = credentials("${CLUSTER_CONFIG_NAME}")
+      AWS_CREDENTIALS      = credentials('aws-credentails')
+  }
+    stages {
+        stage('configure aws') {
+            steps {
+                container('kubetoolsawscontainer') {
+                    sh '''
+                        aws --version
+                        aws configure set aws_access_key_id ${AWS_CREDENTIALS_USR}
+                        aws configure set aws_secret_access_key ${AWS_CREDENTIALS_PSW}
+                        aws configure set default.region us-east-2
+                        aws configure list
+                    '''
+                }
+            }
+        }
+        stage('Main') {
+            steps {
+                container('kubetoolsawscontainer'){
+                    sh 'helm upgrade ${SERVICE_NAME} tools/helm/appdependencies/${SERVICE_NAME} --install -n ${NAME_SPACE}  --kubeconfig ${KUBECONFIG}'
+                }
+            }
+        }
+    }
+}

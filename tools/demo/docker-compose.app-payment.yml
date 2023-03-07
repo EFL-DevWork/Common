@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  paymentservice:
+    container_name: payment-service
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - "../../.env"
+    environment:
+      DB_HOST: postgres
+      FRAUD_URL: http://fraudservice:9002
+      AUTH_SERVER_URL: http://keycloak:8080/auth
+      CONFIG_SERVER_URL: http://configserver:8888
+      VAULT_URI: http://vault:8200
+      JAEGER_ENDPOINT: http://jaeger:14250
+    labels:
+      collect_logs_using_filebeat: "true"
+      convert_logs_to_json_object: "true"
+    networks:
+      - default
+  
+networks:
+  default:
+    name: ${NETWORK_NAME}

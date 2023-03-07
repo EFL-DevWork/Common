@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  init_payment_db.sh: |
+    export PGPASSWORD=$POSTGRES_PASSWORD
+    psql -c "create user payment_user_java superuser password '$POSTGRES_PASSWORD';" -U postgres -h postgresql -p 5432
+    psql -c "create database payment_db_java owner=payment_user_java" -U postgres -h postgresql -p 5432
+
+  init_bank_db.sh: |
+    export PGPASSWORD=$POSTGRES_PASSWORD
+    psql -c "create user bank_user_java superuser password '$POSTGRES_PASSWORD';" -U postgres -h postgresql -p 5432
+    psql -c "create database bank_db_java owner=bank_user_java" -U postgres -h postgresql -p 5432
+
+
+

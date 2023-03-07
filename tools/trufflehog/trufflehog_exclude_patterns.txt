@@ -1,0 +1,10 @@
+.*\.js.map$
+.*\.talismanrc
+.*\.md
+.*\.log
+.*dependency\-check\-known\-issues\.xml
+
+.*swagger.*\.js
+.*swagger.*\.css
+.*swagger.*\.map
+.*BankInfoServiceTest.*\.java

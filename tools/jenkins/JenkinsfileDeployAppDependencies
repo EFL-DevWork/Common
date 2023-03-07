@@ -1,0 +1,32 @@
+// Uses Declarative syntax to run commands inside a container.
+library identifier: 'gradlelibrary@master',
+    retriever: modernSCM([
+      $class: 'GitSCMSource',
+      credentialsId: 'githubcredentials',
+      remote: 'https://github.com/Regional-IT-India/ci-jenkins-starter.git'
+    ])
+pipeline {
+    agent {
+        kubernetes {
+            yaml libraryResource('jenkins-agent-pod.yaml') // Manifest file for pod. You will find all the common files under resources
+        }
+    }
+    parameters {
+      string(name: 'NAME_SPACE', defaultValue: 'apps', description: 'Add name space to deploy')
+      choice(name: 'CLUSTER_CONFIG_NAME', choices: ["kubernetes-dev","kubernetes-qa"], description: 'Pick one config file to deploy into infra of that cluster')
+      choice(name: 'SERVICE_NAME', choices: ["bankservice","fraudservice"], description: 'Pick one service')
+  }
+  environment{
+      NEXUS_CREDENTIALS    = credentials('nexuscredentials')
+      KUBECONFIG           = credentials("${CLUSTER_CONFIG_NAME}")
+  }
+    stages {
+        stage('Main') {
+            steps {
+                container('helmcontainer'){
+                    sh 'helm upgrade ${SERVICE_NAME} tools/helm/appdependencies/${SERVICE_NAME} --install -n ${NAME_SPACE} --kubeconfig ${KUBECONFIG}'
+                }
+            }
+        }
+    }
+}

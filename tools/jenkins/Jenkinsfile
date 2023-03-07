@@ -1,0 +1,12 @@
+library identifier: 'gradlelibrary@master',
+    retriever: modernSCM([
+      $class: 'GitSCMSource',
+      credentialsId: 'githubcredentials',
+      remote: 'https://github.com/Regional-IT-India/ci-jenkins-starter.git'
+    ])
+
+
+env.SERVICE = 'paymentservice'
+env.VERSION = '1.0'
+
+gradleBuildpipeline([:])

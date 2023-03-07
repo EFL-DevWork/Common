@@ -1,0 +1,17 @@
+{{- if .Values.trafficManagement.retries.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "bankservice.fullname" . }}-retries
+spec:
+  hosts: [{{ include "bankservice.fullname" . }}-clusterip]
+  http:
+  - route:
+    - destination:
+        host: {{ include "bankservice.fullname" . }}-clusterip
+    retries:
+      attempts: {{ .Values.trafficManagement.retries.retryAttempts }}
+      perTryTimeout: {{ .Values.trafficManagement.retries.perTryTimeout }}
+      retryOn: {{ .Values.trafficManagement.retries.retryOn }}
+    timeout: {{ .Values.trafficManagement.retries.timeout }}
+{{- end }}

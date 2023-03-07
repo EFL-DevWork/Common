@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: paymentservice
+  cloud:
+    config:
+      enabled: ${CONFIG_SERVER_ENABLED:false}
+      password: ${CONFIG_SERVER_PASSWORD}
+      uri: ${CONFIG_SERVER_URL}
+      username: ${CONFIG_SERVER_USERNAME}
+    vault:
+      app-role:
+        role-id: ${VAULT_ROLE_ID}
+        secret-id: ${VAULT_SECRET_ID}
+      authentication: APPROLE
+      uri: ${VAULT_URI}
+      enabled: ${VAULT_ENABLED:false}

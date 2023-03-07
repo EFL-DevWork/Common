@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "paymentservice.fullname" . }}
+  labels:
+    {{- include "paymentservice.labels" . | nindent 4 }}
+
+spec:
+  selector:
+    matchLabels:
+      {{- include "paymentservice.selectorLabels" . | nindent 6 }}
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+      labels:
+        {{- include "paymentservice.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{ toYaml .Values.containerEnv | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "paymentservice.fullname" . }}-environments
+            - secretRef:
+                name: {{ include "paymentservice.fullname" . }}-secrets
+          volumeMounts:
+            - name: paymentlogs
+              mountPath: logs/
+
+            - name: config-volume
+              mountPath: /config
+
+          ports:
+            - containerPort: 8080
+              name: psport
+
+      volumes:
+        - name: config-volume
+          configMap:
+            defaultMode: 0600
+            name: {{ include "paymentservice.fullname" . }}-configmap
+        - name: paymentlogs
+          emptyDir: {}

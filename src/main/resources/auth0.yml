@@ -1,0 +1,9 @@
+auth0:
+  audience: https://quickstarts/api
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        auth0:
+          jwt:
+            issuer-uri: https://paymentservice-auth0.auth0.com/

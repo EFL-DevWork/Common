@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fraudservice.fullname" . }}
+  labels:
+    {{- include "fraudservice.labels" . | nindent 4 }}
+
+spec:
+  selector:
+    matchLabels:
+      {{- include "fraudservice.selectorLabels" . | nindent 6 }}
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "fraudservice.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "fraudservice.fullname" . }}-configmap
+            - secretRef:
+                name: {{ include "fraudservice.fullname" . }}-secrets
+          ports:
+            - containerPort: 8083
+              name: frudserviceport
+#      imagePullSecrets:
+#      - name: dockerregistry-secrets
