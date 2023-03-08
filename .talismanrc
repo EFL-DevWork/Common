@@ -1,10 +1,9 @@
 fileignoreconfig:
-- filename: .github/workflows/publish.yml
-  checksum: c28aee12c3f0bec902322a06b83edba6450f4ebe0f8cf2e7b4cfeeb7c12aeec1
-version: ""
-- filename: .github/workflows/release.yml
-  checksum: 38d80d7095138d6beebf1e108a448fe6c680aeda5b51abbaeb3b322d088a51ef
-- filename: build.gradle
+  - filename: .github/workflows/publish.yml
+    checksum: c28aee12c3f0bec902322a06b83edba6450f4ebe0f8cf2e7b4cfeeb7c12aeec1
+  - filename: .github/workflows/release.yml
+    checksum: 38d80d7095138d6beebf1e108a448fe6c680aeda5b51abbaeb3b322d088a51ef
+  - filename: build.gradle
   checksum: 1e80c7b162f4583c1d271718c7fa4939bcaeb44027159b53f7b235597c3d95d7
   - filename: src/main/java/com/thoughtworks/security/keycloak/KeycloakSecurityConfig.java
     checksum: 923037f7e0dd8246da1105ec5a7f5d1d210cd64fca0c45e667c3b5a5684095cb
