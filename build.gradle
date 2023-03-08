@@ -15,6 +15,7 @@ plugins {
 }
 
 apply plugin: SpringBootPlugin
+apply plugin: 'maven-publish'
 
 dependencyManagement {
     imports {
