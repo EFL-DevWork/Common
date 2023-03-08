@@ -234,6 +234,7 @@ gradle.taskGraph.whenReady { graph ->
         spotbugsTest.enabled = false
 
     }
+}
     publishing {
         repositories {
             maven {
@@ -246,7 +247,7 @@ gradle.taskGraph.whenReady { graph ->
             }
         }
     }
-}
+
 
     publications {
         gpr(MavenPublication) {
