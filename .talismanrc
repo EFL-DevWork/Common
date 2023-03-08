@@ -4,10 +4,6 @@ fileignoreconfig:
 - filename: build.gradle
   checksum: 1e80c7b162f4583c1d271718c7fa4939bcaeb44027159b53f7b235597c3d95d7
 version: ""
-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
-
-
-fileignoreconfig:
   - filename: src/main/java/com/thoughtworks/security/keycloak/KeycloakSecurityConfig.java
     checksum: 923037f7e0dd8246da1105ec5a7f5d1d210cd64fca0c45e667c3b5a5684095cb
   - filename: src/main/java/com/thoughtworks/payment/KeycloakAuthenticationController.java
