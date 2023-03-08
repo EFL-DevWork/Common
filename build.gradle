@@ -13,6 +13,9 @@ plugins {
     id 'application'
     id 'maven-publish'
 }
+group 'com.thoughtworks'
+version '1.0'
+
 
 apply plugin: SpringBootPlugin
 apply plugin: 'maven-publish'
@@ -247,12 +250,10 @@ gradle.taskGraph.whenReady { graph ->
                 }
             }
         }
-    }
-
-
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
         }
     }
 
