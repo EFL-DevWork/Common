@@ -25,9 +25,7 @@
 #          token: ${{ secrets.GITHUB_TOKEN }}
 
 name: Publish package to GitHub Packages
-on:
-  release:
-    types: [created]
+on: push
 jobs:
   publish:
     runs-on: ubuntu-latest
